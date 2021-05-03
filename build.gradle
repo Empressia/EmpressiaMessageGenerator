@@ -1,0 +1,122 @@
+plugins {
+	id "java";
+	id "application";
+	id "signing";
+	id "maven-publish";
+	id "jp.empressia.gradle.plugin.misc" version "1.0.5";
+}
+
+ext.moduleName = "jp.empressia.message.generator";
+ext.junitVersion = "5.7.0";
+ext.hamcrestVersion = "2.2";
+ext.mainClass = "jp.empressia.message.generator.MessageGenerator";
+archivesBaseName = moduleName;
+
+repositories {
+	mavenCentral();
+}
+
+dependencies {
+	implementation(group:"jp.empressia", name:"jp.empressia.message", version:"1.0.0");
+	implementation(group:"jp.empressia", name:"jp.empressia.picocog", version:"1.0.2");
+	implementation(group:"info.picocli", name:"picocli", version:"4.6.1");
+
+	annotationProcessor(group:"info.picocli", name:"picocli-codegen", version:"4.6.1");
+
+	// use JUnit test framework.
+	testImplementation(group:"org.junit.jupiter", name:"junit-jupiter-api", version:junitVersion);
+	testRuntimeOnly(group:"org.junit.jupiter", name:"junit-jupiter-engine", version:junitVersion);
+	testImplementation(group:"org.hamcrest", name:"hamcrest", version:hamcrestVersion);
+
+	testCompileOnly(group:"jakarta.annotation", name:"jakarta.annotation-api", version:"2.0.0");
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8";
+	options.release = 11;
+	options.compilerArgs << "-parameters" << "-Aproject=${project.name}";
+}
+
+java {
+	modularity.inferModulePath = true;
+	withJavadocJar();
+	withSourcesJar();
+}
+
+javadoc {
+	// 以下の不具合があるけどMavenCentralにあげるにはJavadocのjarが必要になる。
+	// だから、とりあえず、対象を空にして対応している。
+	// https://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8208269
+	source = files();
+	options.charSet "UTF-8";
+	options.encoding "UTF-8";
+	options.addBooleanOption("html5", true);
+	options.addStringOption("Xdoclint:none", "-quiet");
+}
+
+test {
+	useJUnitPlatform();
+}
+
+application {
+	moduleName = project.moduleName;
+	mainClass = project.mainClass;
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId = "jp.empressia";
+			artifactId = moduleName;
+			from components.java;
+			// for Maven Central.
+			pom {
+				name = "Empressia Message Generator";
+				description = "Message Management for Java.";
+				url = "https://github.com/Empressia/EmpressiaMessageGenerator";
+				licenses {
+					license {
+						name = "zlib License";
+						comments = "If you want to use this with a team (multiple people), select the MIT license.";
+					}
+					license {
+						name = "MIT License";
+						comments = "If you want to use this with a team (multiple people), select the MIT license.";
+					}
+				}
+				developers {
+					developer {
+						// The unique ID of this developer in the SCM.
+						id = "Empressia";
+					}
+				}
+				scm {
+					connection = "scm:git:https://github.com/Empressia/EmpressiaMessageGenerator.git"
+					url = "https://github.com/Empressia/EmpressiaMessageGenerator.git"
+				}
+			}
+		}
+	}
+	repositories {
+		// publishMavenPublicationToLocalNetworkRepository
+		maven {
+			name = "LocalNetwork";
+			url = local_network_repository_url;
+		}
+		// publishMavenPublicationToMavenCentralRepository
+		maven {
+			name = "MavenCentral";
+			def releasesRepoUrl = sonatype_release_repository_url;
+			def snapshotsRepoUrl = sonatype_snapshot_repository_url;
+			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl;
+			credentials {
+				username = sonatype_username;
+				password = sonatype_password;
+			}
+		}
+	}
+}
+
+signing {
+	sign publishing.publications.maven;
+}

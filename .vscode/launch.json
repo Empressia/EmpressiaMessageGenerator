@@ -1,0 +1,26 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "java",
+			"name": "Debug (Launch) - Current File",
+			"request": "launch",
+			"mainClass": "${file}",
+			"preLaunchTask": "CopySyncModules",
+			"modulePaths": ["bin/main/", "build/module/"]
+		},
+		{
+			"type": "java",
+			"name": "Debug (Launch)-MessageGenerator<EmpressiaMessageGenerator>",
+			"request": "launch",
+			"mainClass": "jp.empressia.message.generator/jp.empressia.message.generator.MessageGenerator",
+			"args": ["-s", "src/test/java/"],
+			"projectName": "EmpressiaMessageGenerator",
+			"preLaunchTask": "CopySyncModules",
+			"modulePaths": ["bin/main/", "build/module/"]
+		}
+	]
+}
