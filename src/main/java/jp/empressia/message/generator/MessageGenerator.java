@@ -132,6 +132,7 @@ public class MessageGenerator {
 			throw new EmptyClassNameException("メッセージクラスの名前が空文字になっています。", ex);
 		}
 		MessageClassInformation MessageClassInformation = new MessageClassInformation(classInformation);
+		MessageClassInformation.MessagePropertyResourceLocation = Utilities.getMessagePropertyResourceLocation(configuration, DEFAULT_SOuRTH_DIRECTORY_PATH);
 		MessageClassInformation.SourceDirectoryPath = Utilities.getSourceDirectoryPath(configuration, DEFAULT_SOuRTH_DIRECTORY_PATH);
 		MessageClassInformation.Author = (configuration.Author != null) ? configuration.Author : DEFAULT_AUTHOR;
 		MessageClassInformation.CommentoutGeneratedAnnotation = configuration.CommentoutGeneratedAnnotation;
@@ -189,6 +190,8 @@ public class MessageGenerator {
 		classWriter.writeln_n("");
 		EPicoWriter messagesWriter = classWriter.createDeferredEPicoWriter();
 		classWriter.writeln_n("");
+		EPicoWriter locationWriter = classWriter.createDeferredEPicoWriter();
+		classWriter.writeln_n("");
 		EPicoWriter messageTemplateClassesWriter = classWriter.createDeferredEPicoWriter();
 		classWriter.writeln_n("");
 		classWriter.writeln_c("}");
@@ -236,6 +239,10 @@ public class MessageGenerator {
 			messagesWriter.writeln_n("public static final MessageTemplateFor{1}Args {0} = new MessageTemplateFor{1}Args(ID.{0});", mi.ID, mi.ArgCount);
 		}
 
+		String location = MessageClassInformation.MessagePropertyResourceLocation;
+		locationWriter.writeln_n("/** このクラスに対応するメッセージの場所です。 */");
+		locationWriter.writeln_n("private static final String Location = \"{0}\";", location);
+
 		// 存在しない場合は-1になる。
 		int maxArgCount = messageInformations.stream().mapToInt(mi -> mi.ArgCount).max().orElse(-1);
 		for(int argCount = 0; argCount <= maxArgCount; ++argCount) {
@@ -255,19 +262,11 @@ public class MessageGenerator {
 			messageTemplateClassesWriter.writeln_n("	private MessageTemplateFor{0}Args(ID ID) { super(ID.getAsString()); }", argCount);
 			messageTemplateClassesWriter.writeln_n("	/** メッセージを構築して提供します。 */");
 			messageTemplateClassesWriter.writeln_n("	public String format({0}) {", argsDefinitionString);
-			messageTemplateClassesWriter.writeln_n("		return this.format(new Object[] {{0}});", argsString);
+			messageTemplateClassesWriter.writeln_n("		return this.format(Message.Location, new Object[] {{0}});", argsString);
 			messageTemplateClassesWriter.writeln_n("	}");
 			messageTemplateClassesWriter.writeln_n("	/** メッセージを構築して提供します。 */");
 			messageTemplateClassesWriter.writeln_n("	public String format({0}Locale locale) {", frontArgsDefinitionString);
-			messageTemplateClassesWriter.writeln_n("		return this.format(new Object[] {{0}}, locale);", argsString);
-			messageTemplateClassesWriter.writeln_n("	}");
-			messageTemplateClassesWriter.writeln_n("	/** メッセージを構築して提供します。 */");
-			messageTemplateClassesWriter.writeln_n("	public String toString({0}) {", argsDefinitionString);
-			messageTemplateClassesWriter.writeln_n("		return this.toString(new Object[] {{0}});", argsString);
-			messageTemplateClassesWriter.writeln_n("	}");
-			messageTemplateClassesWriter.writeln_n("	/** メッセージを構築して提供します。 */");
-			messageTemplateClassesWriter.writeln_n("	public String toString({0}Locale locale) {", frontArgsDefinitionString);
-			messageTemplateClassesWriter.writeln_n("		return this.toString(new Object[] {{0}}, locale);", argsString);
+			messageTemplateClassesWriter.writeln_n("		return this.format(Message.Location, new Object[] {{0}}, locale);", argsString);
 			messageTemplateClassesWriter.writeln_n("	}");
 			messageTemplateClassesWriter.writeln_n("}");
 		}
@@ -459,6 +458,9 @@ public class MessageGenerator {
 		/** 入力となるメッセージプロパティファイルです。 */
 		@Parameters(description="message property file path from current directory (or absolute path). ex. src/main/resources/message(s).properties.")
 		public String[] MessagePropertyFilePaths;
+		/** 生成後にメッセージプロパティファイルをリソースとして呼び出すときの場所を表現する文字列です。 */
+		@Option(names={"-MessagePropertyResourceLocation", "--message-property-resource-location", "-l"}, description="message property location as resource. ex. message(s).")
+		public String MessagePropertyResourceLocation;
 		/** 著作者です。 */
 		@Option(names={"-Author", "--author", "-u"}, description="author.")
 		public String Author;
@@ -501,6 +503,7 @@ public class MessageGenerator {
 		/**
 		 * 実際に使うメッセージファイルのパスを返します。
 		 * 成功したときに返すパスは全部存在します。
+		 * 製鋼したときに返すパスは必ず１個以上になります。
 		 * @throws FailedToAutoDetectException 自動検出でファイルが見つからなかった場合に投げられます。
 		 * @throws MissingFileException 指定されたファイルが存在しなかった場合に投げられます。
 		 */
@@ -532,6 +535,65 @@ public class MessageGenerator {
 				filePaths = new Path[] { c.get() };
 			}
 			return filePaths;
+		}
+		/**
+		 * 実際に使うメッセージファイルのリソースとしての場所を表現する文字列を返します。
+		 * @throws FailedToAutoDetectException 自動検出でファイルが見つからなかった場合に投げられます。
+		 * @throws MissingFileException 指定されたファイルが存在しなかった場合に投げられます。
+		 * @throws IllegalStateException リソースとしての場所の推測に失敗した場合に投げられます。
+		 */
+		public static String getMessagePropertyResourceLocation(Configuration configuration, String defaultSourceDirecotryPath) {
+			if(configuration.MessagePropertyResourceLocation != null) { return configuration.MessagePropertyResourceLocation; }
+			Path[] paths = Utilities.getMessagePropertyFilePaths(configuration);
+			Path targetPath = paths[0];
+			// 適当に実際のパスから推測する。
+			Path path = null;
+			// ソースディレクトリの最後のjavaをresource西たものが一致すればそれ以降で拡張子をのぞいたものだと推測できる。
+			if(path == null) {
+				Path sourceDirectoryPath = Utilities.getSourceDirectoryPath(configuration, defaultSourceDirecotryPath);
+				if(sourceDirectoryPath.getFileName().toString().equals("java")) {
+					Path resourceDirectoryPath = sourceDirectoryPath.getParent().resolve("resources");
+					if(targetPath.startsWith(resourceDirectoryPath)) {
+						path = resourceDirectoryPath.relativize(targetPath);
+					}
+				}
+			}
+			// なければ、一般に、resourcesの下だと思われるので、最初のresources以降のパスで推測を試みる。
+			if(path == null) {
+				for(int i = 0; i < targetPath.getNameCount(); ++i) {
+					if(targetPath.getName(i).toString().equals("resources")) {
+						path = targetPath.subpath(i + 1, targetPath.getNameCount());
+						break;
+					}
+				}
+			}
+			// なければ、resourcesではなく、javaの下にあると考え、同様に推測してみる。
+			if(path == null) {
+				for(int i = 0; i < targetPath.getNameCount(); ++i) {
+					if(targetPath.getName(i).toString().equals("java")) {
+						path = targetPath.subpath(i + 1, targetPath.getNameCount());
+						break;
+					}
+				}
+			}
+			if(path == null) {
+				throw new IllegalStateException("メッセージプロパティの場所から、リソース呼び出し用の文字列を推測できませんでした。");
+			}
+			StringBuilder builder = new StringBuilder();
+			for(int i = 0; i < path.getNameCount(); ++i) {
+				String name = path.getName(i).toString();
+				if((i + 1 == path.getNameCount()) == false) {
+					builder.append(".");
+				} else {
+					int foundIndex = name.lastIndexOf(".");
+					if(foundIndex != -1) {
+						name = name.substring(0, foundIndex);
+					}
+				}
+				builder.append(name);
+			}
+			String location = builder.toString();
+			return location;
 		}
 		/**
 		 * 実際に使うソースディレクトリのパスを返します。
@@ -588,6 +650,8 @@ public class MessageGenerator {
 	 * @author すふぃあ
 	 */
 	public static class MessageClassInformation extends ClassInformation {
+		/** 生成後にメッセージプロパティファイルをリソースとして呼び出すときの場所を表現する文字列です。 */
+		public String MessagePropertyResourceLocation;
 		/** 出力先となるソースディレクトリです。 */
 		public Path SourceDirectoryPath;
 		/** 著作者です。 */

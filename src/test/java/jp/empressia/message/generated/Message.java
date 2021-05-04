@@ -48,6 +48,9 @@ public class Message {
 	/** 『テストメッセージです（{0}）（{1}）（{2}）。』 */
 	public static final MessageTemplateFor3Args TEST003 = new MessageTemplateFor3Args(ID.TEST003);
 
+	/** このクラスに対応するメッセージの場所です。 */
+	private static final String Location = "message";
+
 	/**
 	 * 埋め込みを0個持つメッセージです。
 	 * @author すふぃあ
@@ -58,19 +61,11 @@ public class Message {
 		private MessageTemplateFor0Args(ID ID) { super(ID.getAsString()); }
 		/** メッセージを構築して提供します。 */
 		public String format() {
-			return this.format(new Object[] {});
+			return this.format(Message.Location, new Object[] {});
 		}
 		/** メッセージを構築して提供します。 */
 		public String format(Locale locale) {
-			return this.format(new Object[] {}, locale);
-		}
-		/** メッセージを構築して提供します。 */
-		public String toString() {
-			return this.toString(new Object[] {});
-		}
-		/** メッセージを構築して提供します。 */
-		public String toString(Locale locale) {
-			return this.toString(new Object[] {}, locale);
+			return this.format(Message.Location, new Object[] {}, locale);
 		}
 	}
 	/**
@@ -83,19 +78,11 @@ public class Message {
 		private MessageTemplateFor1Args(ID ID) { super(ID.getAsString()); }
 		/** メッセージを構築して提供します。 */
 		public String format(Object arg0) {
-			return this.format(new Object[] {arg0});
+			return this.format(Message.Location, new Object[] {arg0});
 		}
 		/** メッセージを構築して提供します。 */
 		public String format(Object arg0, Locale locale) {
-			return this.format(new Object[] {arg0}, locale);
-		}
-		/** メッセージを構築して提供します。 */
-		public String toString(Object arg0) {
-			return this.toString(new Object[] {arg0});
-		}
-		/** メッセージを構築して提供します。 */
-		public String toString(Object arg0, Locale locale) {
-			return this.toString(new Object[] {arg0}, locale);
+			return this.format(Message.Location, new Object[] {arg0}, locale);
 		}
 	}
 	/**
@@ -108,19 +95,11 @@ public class Message {
 		private MessageTemplateFor2Args(ID ID) { super(ID.getAsString()); }
 		/** メッセージを構築して提供します。 */
 		public String format(Object arg0, Object arg1) {
-			return this.format(new Object[] {arg0, arg1});
+			return this.format(Message.Location, new Object[] {arg0, arg1});
 		}
 		/** メッセージを構築して提供します。 */
 		public String format(Object arg0, Object arg1, Locale locale) {
-			return this.format(new Object[] {arg0, arg1}, locale);
-		}
-		/** メッセージを構築して提供します。 */
-		public String toString(Object arg0, Object arg1) {
-			return this.toString(new Object[] {arg0, arg1});
-		}
-		/** メッセージを構築して提供します。 */
-		public String toString(Object arg0, Object arg1, Locale locale) {
-			return this.toString(new Object[] {arg0, arg1}, locale);
+			return this.format(Message.Location, new Object[] {arg0, arg1}, locale);
 		}
 	}
 	/**
@@ -133,19 +112,11 @@ public class Message {
 		private MessageTemplateFor3Args(ID ID) { super(ID.getAsString()); }
 		/** メッセージを構築して提供します。 */
 		public String format(Object arg0, Object arg1, Object arg2) {
-			return this.format(new Object[] {arg0, arg1, arg2});
+			return this.format(Message.Location, new Object[] {arg0, arg1, arg2});
 		}
 		/** メッセージを構築して提供します。 */
 		public String format(Object arg0, Object arg1, Object arg2, Locale locale) {
-			return this.format(new Object[] {arg0, arg1, arg2}, locale);
-		}
-		/** メッセージを構築して提供します。 */
-		public String toString(Object arg0, Object arg1, Object arg2) {
-			return this.toString(new Object[] {arg0, arg1, arg2});
-		}
-		/** メッセージを構築して提供します。 */
-		public String toString(Object arg0, Object arg1, Object arg2, Locale locale) {
-			return this.toString(new Object[] {arg0, arg1, arg2}, locale);
+			return this.format(Message.Location, new Object[] {arg0, arg1, arg2}, locale);
 		}
 	}
 

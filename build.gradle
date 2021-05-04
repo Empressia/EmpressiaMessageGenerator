@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-	implementation(group:"jp.empressia", name:"jp.empressia.message", version:"1.0.2");
+	implementation(group:"jp.empressia", name:"jp.empressia.message", version:"1.1.0");
 	implementation(group:"jp.empressia", name:"jp.empressia.picocog", version:"1.0.2");
 	implementation(group:"info.picocli", name:"picocli", version:"4.6.1");
 

@@ -19,6 +19,22 @@ Empressia Messageのメッセージクラスなどを生成するためのライ
 
 Generatorで生成されたクラスの使い方は、Empressia Messageを参照してください。  
 
+### メッセージファイルの配置場所
+
+元となるメッセージファイルは、プロパティを想定しています。  
+
+何も設定しない場合、以下の順にファイルを探します。  
+1. src/main/resources/message.properties
+1. src/main/resources/messages.properties
+
+これは、MessagePropertyFilePathsを指定することで変更できます。  
+複数指定できるのは、複数のLocaleのファイルを読み込むためです。  
+先に指定したファイルが優先的に読み込まれます。  
+
+クラス生成後は、これらのファイルには、リソースとしてアクセスされます。  
+何も設定しない場合は、見つかったファイルに応じて、自動で設定されます。  
+自動設定がうまく動かない場合は、MessagePropertyResourceLocationを指定してください。  
+
 ### Javaからの使用
 
 ライブラリを追加します。  
@@ -40,6 +56,7 @@ MessageGeneratorConfigurationで動作の設定を行います。
 |-|-|
 |BaseDirectoryPaths|相対パスを解決するための元となるディレクトリのパスです。|
 |MessagePropertyFilePaths|入力となるメッセージプロパティファイルです。|
+|MessagePropertyResourceLocation|入力となるメッセージプロパティファイルです。|
 |Author|著作者です。|
 |SourceDirectoryPath|出力先となるソースディレクトリです。|
 |PackageName|パッケージの名前です。|
