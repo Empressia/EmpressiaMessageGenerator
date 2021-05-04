@@ -513,7 +513,7 @@ public class MessageGenerator {
 					.toArray(Path[]::new);
 				for(Path p : c) {
 					if(Files.exists(p) == false) {
-						String message = MessageFormat.format("メッセージファイル[{0}]が見つかりませんでした。", p);
+						String message = MessageFormat.format("メッセージファイル[{0}]が見つかりませんでした。", p.toAbsolutePath());
 						throw new MissingFileException(message);
 					}
 				}
