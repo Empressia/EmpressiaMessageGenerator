@@ -374,7 +374,7 @@ public class MessageGenerator {
 			constructorsWriter.writeln_n("	this(message, new Object[] {{0}}, (l) -> message.format({1}l));", argsString, frontArgsString);
 			constructorsWriter.writeln_n("}");
 
-			for(int c = 0; c <= argCount; ++c) {
+			for(int c = 0; c < argCount; ++c) {
 				paramInformationWriter.writeln_n(" * @param arg{0} メッセージに埋め込む{1}個目のオブジェクト", c, c+1);
 			}
 		}
@@ -417,7 +417,7 @@ public class MessageGenerator {
 			membersWriter.writeln_n("	return {0}.{1}.{2}.format({3});", MessageClassInformation.PackageName, MessageClassInformation.ClassName, mi.ID, argsString);
 			membersWriter.writeln_n("}");
 
-			for(int c = 0; c <= argCount; ++c) {
+			for(int c = 0; c < argCount; ++c) {
 				paramInformationWriter.writeln_n(" * @param arg{0} メッセージに埋め込む{1}個目のオブジェクト", c, c+1);
 			}
 		}

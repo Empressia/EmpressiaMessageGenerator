@@ -11,7 +11,6 @@ public class Messages {
 
 	/**
 	 * 『テストメッセージです。』
-	 * @param arg0 メッセージに埋め込む1個目のオブジェクト
 	 */
 	public static String TEST000() {
 		return jp.empressia.message.generated.Message.TEST000.format();
@@ -19,7 +18,6 @@ public class Messages {
 	/**
 	 * 『テストメッセージです（{0}）。』
 	 * @param arg0 メッセージに埋め込む1個目のオブジェクト
-	 * @param arg1 メッセージに埋め込む2個目のオブジェクト
 	 */
 	public static String TEST001(Object arg0) {
 		return jp.empressia.message.generated.Message.TEST001.format(arg0);
@@ -28,7 +26,6 @@ public class Messages {
 	 * 『テストメッセージです（{0}）（{1}）。』
 	 * @param arg0 メッセージに埋め込む1個目のオブジェクト
 	 * @param arg1 メッセージに埋め込む2個目のオブジェクト
-	 * @param arg2 メッセージに埋め込む3個目のオブジェクト
 	 */
 	public static String TEST002(Object arg0, Object arg1) {
 		return jp.empressia.message.generated.Message.TEST002.format(arg0, arg1);
@@ -38,7 +35,6 @@ public class Messages {
 	 * @param arg0 メッセージに埋め込む1個目のオブジェクト
 	 * @param arg1 メッセージに埋め込む2個目のオブジェクト
 	 * @param arg2 メッセージに埋め込む3個目のオブジェクト
-	 * @param arg3 メッセージに埋め込む4個目のオブジェクト
 	 */
 	public static String TEST003(Object arg0, Object arg1, Object arg2) {
 		return jp.empressia.message.generated.Message.TEST003.format(arg0, arg1, arg2);

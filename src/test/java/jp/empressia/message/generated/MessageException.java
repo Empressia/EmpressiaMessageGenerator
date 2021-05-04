@@ -56,7 +56,6 @@ public class MessageException extends RuntimeException {
 	/**
 	 * コンストラクタです。
 	 * @param message messages.propertiesにあるメッセージIDに対応するMessage定数
-	 * @param arg0 メッセージに埋め込む1個目のオブジェクト
 	 */
 	public MessageException(MessageTemplateFor0Args message) {
 		this(message, new Object[] {}, (l) -> message.format(l));
@@ -65,7 +64,6 @@ public class MessageException extends RuntimeException {
 	 * コンストラクタです。
 	 * @param message messages.propertiesにあるメッセージIDに対応するMessage定数
 	 * @param arg0 メッセージに埋め込む1個目のオブジェクト
-	 * @param arg1 メッセージに埋め込む2個目のオブジェクト
 	 */
 	public MessageException(MessageTemplateFor1Args message, Object arg0) {
 		this(message, new Object[] {arg0}, (l) -> message.format(arg0, l));
@@ -75,7 +73,6 @@ public class MessageException extends RuntimeException {
 	 * @param message messages.propertiesにあるメッセージIDに対応するMessage定数
 	 * @param arg0 メッセージに埋め込む1個目のオブジェクト
 	 * @param arg1 メッセージに埋め込む2個目のオブジェクト
-	 * @param arg2 メッセージに埋め込む3個目のオブジェクト
 	 */
 	public MessageException(MessageTemplateFor2Args message, Object arg0, Object arg1) {
 		this(message, new Object[] {arg0, arg1}, (l) -> message.format(arg0, arg1, l));
@@ -86,7 +83,6 @@ public class MessageException extends RuntimeException {
 	 * @param arg0 メッセージに埋め込む1個目のオブジェクト
 	 * @param arg1 メッセージに埋め込む2個目のオブジェクト
 	 * @param arg2 メッセージに埋め込む3個目のオブジェクト
-	 * @param arg3 メッセージに埋め込む4個目のオブジェクト
 	 */
 	public MessageException(MessageTemplateFor3Args message, Object arg0, Object arg1, Object arg2) {
 		this(message, new Object[] {arg0, arg1, arg2}, (l) -> message.format(arg0, arg1, arg2, l));
