@@ -262,11 +262,11 @@ public class MessageGenerator {
 			messageTemplateClassesWriter.writeln_n("	private MessageTemplateFor{0}Args(ID ID) { super(ID.getAsString()); }", argCount);
 			messageTemplateClassesWriter.writeln_n("	/** メッセージを構築して提供します。 */");
 			messageTemplateClassesWriter.writeln_n("	public String format({0}) {", argsDefinitionString);
-			messageTemplateClassesWriter.writeln_n("		return this.format(Message.Location, new Object[] {{0}});", argsString);
+			messageTemplateClassesWriter.writeln_n("		return this.format({0}.Location, new Object[] {{1}});", MessageClassInformation.ClassName, argsString);
 			messageTemplateClassesWriter.writeln_n("	}");
 			messageTemplateClassesWriter.writeln_n("	/** メッセージを構築して提供します。 */");
 			messageTemplateClassesWriter.writeln_n("	public String format({0}Locale locale) {", frontArgsDefinitionString);
-			messageTemplateClassesWriter.writeln_n("		return this.format(Message.Location, new Object[] {{0}}, locale);", argsString);
+			messageTemplateClassesWriter.writeln_n("		return this.format({0}.Location, new Object[] {{1}}, locale);", MessageClassInformation.ClassName, argsString);
 			messageTemplateClassesWriter.writeln_n("	}");
 			messageTemplateClassesWriter.writeln_n("}");
 		}
