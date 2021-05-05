@@ -501,7 +501,7 @@ public class MessageGenerator {
 	 */
 	public static class Utilities {
 		/**
-		 * 実際に使うメッセージファイルのパスを返します。
+		 * 実際に使うメッセージプロパティのパスを返します。
 		 * 成功したときに返すパスは全部存在します。
 		 * 製鋼したときに返すパスは必ず１個以上になります。
 		 * @throws FailedToAutoDetectException 自動検出でファイルが見つからなかった場合に投げられます。
@@ -516,7 +516,7 @@ public class MessageGenerator {
 					.toArray(Path[]::new);
 				for(Path p : c) {
 					if(Files.exists(p) == false) {
-						String message = MessageFormat.format("メッセージファイル[{0}]が見つかりませんでした。", p.toAbsolutePath());
+						String message = MessageFormat.format("メッセージプロパティ[{0}]が見つかりませんでした。", p.toAbsolutePath());
 						throw new MissingFileException(message);
 					}
 				}
@@ -530,14 +530,14 @@ public class MessageGenerator {
 					.filter(Files::exists)
 					.findFirst();
 				if(c.isPresent() == false) {
-					throw new FailedToAutoDetectException("メッセージファイルが見つかりませんでした。");
+					throw new FailedToAutoDetectException("メッセージプロパティが見つかりませんでした。");
 				}
 				filePaths = new Path[] { c.get() };
 			}
 			return filePaths;
 		}
 		/**
-		 * 実際に使うメッセージファイルのリソースとしての場所を表現する文字列を返します。
+		 * 実際に使うメッセージプロパティのリソースとしての場所を表現する文字列を返します。
 		 * @throws FailedToAutoDetectException 自動検出でファイルが見つからなかった場合に投げられます。
 		 * @throws MissingFileException 指定されたファイルが存在しなかった場合に投げられます。
 		 * @throws IllegalStateException リソースとしての場所の推測に失敗した場合に投げられます。
