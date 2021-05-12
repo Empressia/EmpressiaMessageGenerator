@@ -18,13 +18,33 @@ public class Message {
 	 */
 	@Generated("jp.empressia.message.generator.MessageGenerator")
 	public static enum ID {
-		/** 『テストメッセージです。』*/
+		/** 『{{}}{{}{}{{{}{}}}}』 */
+		BALANCE01("BALANCE01"),
+		/** {@literal 『@{@{@}@}@{@{@}@{@}@{@{@{@}@{@}@}@}@}@』} */
+		BALANCE02("BALANCE02"),
+		/** {@literal 『@}{{@literal @{@{@{@}@}@}@}{{@literal @{@}』} */
+		EBRACE01("EBRACE01"),
+		/** {@literal 『@}}{@literal @{@{@}@}@}}{@literal @}{{@literal @}{{@literal @}{{@literal @}{』 */
+		EBRACE02("EBRACE02"),
+		/** {@literal 『/*コメント*}{@literal /』} */
+		ESCAPE01("ESCAPE01"),
+		/** {@literal 『&amp;』} */
+		ESCAPE02("ESCAPE02"),
+		/** {@literal 『<div>』} */
+		ESCAPE03("ESCAPE03"),
+		/** {@literal 『<div>/*コメント&amp;*}{@literal /</div>』} */
+		ESCAPE04("ESCAPE04"),
+		/** 『{{{{}}}{{}』 */
+		NBRACE01("NBRACE01"),
+		/** 『}{{}}}{{{{』 */
+		NBRACE02("NBRACE02"),
+		/** 『テストメッセージです。』 */
 		TEST000("TEST000"),
-		/** 『テストメッセージです（{0}）。』*/
+		/** 『テストメッセージです（{0}）。』 */
 		TEST001("TEST001"),
-		/** 『テストメッセージです（{0}）（{1}）。』*/
+		/** 『テストメッセージです（{0}）（{1}）。』 */
 		TEST002("TEST002"),
-		/** 『テストメッセージです（{0}）（{1}）（{2}）。』*/
+		/** 『テストメッセージです（{0}）（{1}）（{2}）。』 */
 		TEST003("TEST003"),
 		;
 		/** IDの文字列表現です。 */
@@ -39,6 +59,26 @@ public class Message {
 		}
 	}
 
+	/** 『{{}}{{}{}{{{}{}}}}』 */
+	public static final MessageTemplateFor0Args BALANCE01 = new MessageTemplateFor0Args(ID.BALANCE01);
+	/** {@literal 『@{@{@}@}@{@{@}@{@}@{@{@{@}@{@}@}@}@}@』} */
+	public static final MessageTemplateFor0Args BALANCE02 = new MessageTemplateFor0Args(ID.BALANCE02);
+	/** {@literal 『@}{{@literal @{@{@{@}@}@}@}{{@literal @{@}』} */
+	public static final MessageTemplateFor0Args EBRACE01 = new MessageTemplateFor0Args(ID.EBRACE01);
+	/** {@literal 『@}}{@literal @{@{@}@}@}}{@literal @}{{@literal @}{{@literal @}{{@literal @}{』 */
+	public static final MessageTemplateFor0Args EBRACE02 = new MessageTemplateFor0Args(ID.EBRACE02);
+	/** {@literal 『/*コメント*}{@literal /』} */
+	public static final MessageTemplateFor0Args ESCAPE01 = new MessageTemplateFor0Args(ID.ESCAPE01);
+	/** {@literal 『&amp;』} */
+	public static final MessageTemplateFor0Args ESCAPE02 = new MessageTemplateFor0Args(ID.ESCAPE02);
+	/** {@literal 『<div>』} */
+	public static final MessageTemplateFor0Args ESCAPE03 = new MessageTemplateFor0Args(ID.ESCAPE03);
+	/** {@literal 『<div>/*コメント&amp;*}{@literal /</div>』} */
+	public static final MessageTemplateFor0Args ESCAPE04 = new MessageTemplateFor0Args(ID.ESCAPE04);
+	/** 『{{{{}}}{{}』 */
+	public static final MessageTemplateFor0Args NBRACE01 = new MessageTemplateFor0Args(ID.NBRACE01);
+	/** 『}{{}}}{{{{』 */
+	public static final MessageTemplateFor0Args NBRACE02 = new MessageTemplateFor0Args(ID.NBRACE02);
 	/** 『テストメッセージです。』 */
 	public static final MessageTemplateFor0Args TEST000 = new MessageTemplateFor0Args(ID.TEST000);
 	/** 『テストメッセージです（{0}）。』 */

@@ -10,6 +10,66 @@ import jakarta.annotation.Generated;
 public class Messages {
 
 	/**
+	 * 『{{}}{{}{}{{{}{}}}}』
+	 */
+	public static String BALANCE01() {
+		return jp.empressia.message.generated.Message.BALANCE01.format();
+	}
+	/**
+	 * {@literal 『@{@{@}@}@{@{@}@{@}@{@{@{@}@{@}@}@}@}@』}
+	 */
+	public static String BALANCE02() {
+		return jp.empressia.message.generated.Message.BALANCE02.format();
+	}
+	/**
+	 * {@literal 『@}{{@literal @{@{@{@}@}@}@}{{@literal @{@}』}
+	 */
+	public static String EBRACE01() {
+		return jp.empressia.message.generated.Message.EBRACE01.format();
+	}
+	/**
+	 * {@literal 『@}}{@literal @{@{@}@}@}}{@literal @}{{@literal @}{{@literal @}{{@literal @}{』
+	 */
+	public static String EBRACE02() {
+		return jp.empressia.message.generated.Message.EBRACE02.format();
+	}
+	/**
+	 * {@literal 『/*コメント*}{@literal /』}
+	 */
+	public static String ESCAPE01() {
+		return jp.empressia.message.generated.Message.ESCAPE01.format();
+	}
+	/**
+	 * {@literal 『&amp;』}
+	 */
+	public static String ESCAPE02() {
+		return jp.empressia.message.generated.Message.ESCAPE02.format();
+	}
+	/**
+	 * {@literal 『<div>』}
+	 */
+	public static String ESCAPE03() {
+		return jp.empressia.message.generated.Message.ESCAPE03.format();
+	}
+	/**
+	 * {@literal 『<div>/*コメント&amp;*}{@literal /</div>』}
+	 */
+	public static String ESCAPE04() {
+		return jp.empressia.message.generated.Message.ESCAPE04.format();
+	}
+	/**
+	 * 『{{{{}}}{{}』
+	 */
+	public static String NBRACE01() {
+		return jp.empressia.message.generated.Message.NBRACE01.format();
+	}
+	/**
+	 * 『}{{}}}{{{{』
+	 */
+	public static String NBRACE02() {
+		return jp.empressia.message.generated.Message.NBRACE02.format();
+	}
+	/**
 	 * 『テストメッセージです。』
 	 */
 	public static String TEST000() {

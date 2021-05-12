@@ -52,7 +52,13 @@ public class MessageGenerator {
 
 	/** entry point。 */
 	public static void main(String[] args) {
-		var c = new CommandLine(new Configuration());
+		CommandLine c;
+		try {
+		c = new CommandLine(new Configuration());
+		} catch(Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
 		c.parseArgs(args);
 		Configuration configuration = c.getCommand();
 		if(configuration.Help) {
@@ -203,7 +209,8 @@ public class MessageGenerator {
 		innerIDClassWriter.writeln_n("{1}@Generated(\"{0}\")", this.getClass().getName(), generatedAnnotattionCommentOutPrefix);
 		innerIDClassWriter.writeln_o("public static enum ID {");
 		for(MessageInformation mi : messageInformations) {
-			innerIDClassWriter.writeln_n("/** 『{0}』*/", mi.Message);
+			String commentLine = MessageGenerator.escapeJavadocLiteralLine("『" + mi.Message + "』");
+			innerIDClassWriter.writeln_n("/** {0} */", commentLine);
 			innerIDClassWriter.writeln_n("{0}(\"{1}\"),", mi.ID, mi.Key);
 		}
 		innerIDClassWriter.writeln_n(";");
@@ -228,14 +235,15 @@ public class MessageGenerator {
 			constantsClassWriter.writeln_n("{1}@Generated(\"{0}\")", this.getClass().getName(), generatedAnnotattionCommentOutPrefix);
 			constantsClassWriter.writeln_o("public static class Constants {");
 			for(MessageInformation mi : messageInformations) {
-				constantsClassWriter.writeln_n("/** 『{0}』*/", mi.Message);
+				constantsClassWriter.writeln_n("/** 『{0}』 */", mi.Message);
 				constantsClassWriter.writeln_n("public static final String {0} = \"{1}\";", mi.ID, mi.Key);
 			}
 			constantsClassWriter.writeln_c("}");
 		}
 
 		for(MessageInformation mi : messageInformations) {
-			messagesWriter.writeln_n("/** 『{0}』 */", mi.Message);
+			String commentLine = MessageGenerator.escapeJavadocLiteralLine("『" + mi.Message + "』");
+			messagesWriter.writeln_n("/** {0} */", commentLine);
 			messagesWriter.writeln_n("public static final MessageTemplateFor{1}Args {0} = new MessageTemplateFor{1}Args(ID.{0});", mi.ID, mi.ArgCount);
 		}
 
@@ -408,8 +416,9 @@ public class MessageGenerator {
 			String argsDefinitionString = IntStream.range(0, argCount).mapToObj(i -> "Object arg" + i).collect(Collectors.joining(", "));
 			// 『arg*, arg*』
 			String argsString = IntStream.range(0, argCount).mapToObj(i -> "arg" + i).collect(Collectors.joining(", "));
+			String commentLine = MessageGenerator.escapeJavadocLiteralLine("『" + mi.Message + "』");
 			membersWriter.writeln_n("/**");
-			membersWriter.writeln_n(" * 『{0}』", mi.Message);
+			membersWriter.writeln_n(" * {0}", commentLine);
 			EPicoWriter paramInformationWriter = membersWriter.createDeferredEPicoWriter();
 			membersWriter.writeln_n(" */");
 			membersWriter.writeln_n("public static String {0}({1}) {", mi.ID, argsDefinitionString);
@@ -749,6 +758,104 @@ public class MessageGenerator {
 		/** コンストラクタ。 */
 		public EmptyClassNameException(String message, Throwable cause) {
 			super(message, cause);
+		}
+	}
+
+	/** 任意の1行入力をJavadocでそれなりに見えるように必要に応じてエスケープします。 */
+	public static String escapeJavadocLiteralLine(String line) {
+		// 簡単に大雑把にでも確実にエスケープしたい。
+		// なるべくもとのまま、Javadocの機能でエスケープしたい。
+		// {@literal}を使用する。
+		// というわけで、
+		// 『@』→タグと間違われるかもしれないからエスケープする。
+		// 『&』→文字参照とかの一部になるかもしれないからエスケープする。
+		// 『<』→HTMLタグと間違われるかもしれないからエスケープする。
+		// 『*/』→確実にエスケープしないとコンパイルエラーになる。特にこれは、『{@literal *}{@literal /}』みたいな形にする必要がある。
+		// 上のいずれかが含まれていたら、リテラルでかこう必要がある。
+		// 『{』『}』のバランスをopenCountとして記録していく。
+		// 読み始めて、openCountがマイナスになるまで読み進める。
+		// マイナスになるときに、直前までの文字列を確認して、
+		// 問題となる文字があれば、直前までの全体をリテラルでかこう。
+		// 問題となる文字がなければ、直前までの全体はそのままで良い。
+		// トリガーとなった文字をそのまま出力して、その直後からやり直す。
+		// プラスのまま終わったら、最後にopenCountを0から1に増やすことになった場所の直前までの文字列を確認して、
+		// 問題となる文字があれば、直前までの全体をリテラルでかこう。
+		// 問題となる文字がなければ、直前までの全体はそのままで良い。
+		// トリガーとなった文字をそのまま出力して、その直後からやり直す。
+		if(line.contains("@") || line.contains("&") || line.contains("<") || line.contains("*/")) {
+			String result;
+			int openOffset = 0;
+			int closeOffset = 0;
+			int o = line.indexOf("{", openOffset);
+			int c = line.indexOf("}", closeOffset);
+			if((o == -1) && (c == -1)) {
+				result = "{@literal " + line.replaceAll("\\*/", "*}{@literal /") + "}";
+			} else {
+				int openCount = 0;
+				int lastStartOpenIndex = -1;
+				int copiedOffset = 0;
+				StringBuilder resultBuilder = new StringBuilder();
+				while(true) {
+					if((o == -1) && (c == -1)) {
+						if(openCount > 0) {
+							int toIndex = lastStartOpenIndex;
+							if(copiedOffset != toIndex) {
+								String s = line.substring(copiedOffset, toIndex);
+								if(s.contains("@") || s.contains("&") || s.contains("<") || s.contains("*/")) {
+									resultBuilder.append("{@literal ").append(s.replaceAll("\\*/", "*}{@literal /")).append("}");
+								} else {
+									resultBuilder.append(s);
+								}
+							}
+							resultBuilder.append(line.charAt(toIndex));
+							copiedOffset = toIndex + 1;
+							o = line.indexOf("{", copiedOffset);
+							c = line.indexOf("}", copiedOffset);
+							openCount = 0;
+							continue;
+						} else {
+							int toIndex = line.length();
+							if(copiedOffset != toIndex) {
+								String s = line.substring(copiedOffset, toIndex);
+								if(s.contains("@") || s.contains("&") || s.contains("<") || s.contains("*/")) {
+									resultBuilder.append("{@literal ").append(s.replaceAll("\\*/", "*}{@literal /")).append("}");
+								} else {
+									resultBuilder.append(s);
+								}
+							}
+							break;
+						}
+					}
+					if((o != -1) && ((c == -1) || (o < c))) {
+						if(openCount == 0) {
+							lastStartOpenIndex = o;
+						}
+						++openCount;
+						o = line.indexOf("{", o + 1);
+					} else if((c != -1) && ((o == -1) || (c < o))) {
+						if(openCount > 0) {
+							--openCount;
+						} else {
+							int toIndex = c;
+							if(copiedOffset != toIndex) {
+								String s = line.substring(copiedOffset, toIndex);
+								if(s.contains("@") || s.contains("&") || s.contains("<") || s.contains("*/")) {
+									resultBuilder.append("{@literal ").append(s.replaceAll("\\*/", "*}{@literal /")).append("}");
+								} else {
+									resultBuilder.append(s);
+								}
+							}
+							resultBuilder.append(line.charAt(toIndex));
+							copiedOffset = toIndex + 1;
+						}
+						c = line.indexOf("}", c + 1);
+					}
+				}
+				result = resultBuilder.toString();
+			}
+			return result;
+		} else {
+			return line;
 		}
 	}
 
